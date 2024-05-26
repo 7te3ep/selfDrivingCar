@@ -13,12 +13,11 @@ export default class Car {
    }
 
    update(SPEED,SIZE){
-      if (!this.alive) return
       if (this.angle < 0) this.angle += 0.2
       else if (this.angle > 0) this.angle -= 0.2
       this.x += Math.sin(this.angle* Math.PI/180) * 1.1 * SPEED
       if (this.x - this.size[0]/2 < 0 || this.x + this.size[0]/2 > SIZE[0]) this.alive = false
-      this.fitScore += 1
+      this.fitScore ++
    }
 
    checkObstacle(obstacle){
@@ -36,13 +35,11 @@ export default class Car {
       rect1.y + this.size[1] > rect2.y
    }
 
-   draw(){
-      ctx.fillStyle = "rgb(0,0,255)"
-      if (this.isClone) ctx.fillStyle = "rgba(0,0,255,0.5)"
-      if (!this.alive) ctx.fillStyle = "rgba(255,0,255,0)"
+   draw(color = "rgba(0,0,255,0.5)"){
+      ctx.fillStyle = color
       ctx.save();
       ctx.translate(this.x, this.y);
-      //ctx.rotate(this.angle * Math.PI/180)
+      ctx.rotate(this.angle * Math.PI/180)
       ctx.fillRect(-this.size[0]/2,-this.size[1]/2,this.size[0],this.size[1]);
       ctx.restore();
 

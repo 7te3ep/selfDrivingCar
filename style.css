@@ -3,11 +3,11 @@
    padding: 0px;
 }
 
-body {
-   display: flex;
-   justify-content: center;
-}
 
 #canva {
    background-color: grey;
+}
+
+#canva1 {
+   background-color: black;
 }

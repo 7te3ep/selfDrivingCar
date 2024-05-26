@@ -1,7 +1,4 @@
-function sigmoid(z) {
-  return 1 / (1 + Math.exp(-z/2000));
-}
-
+import {ctx1,canvas1} from "./canvas1.js"
 
 export default class Network {
    constructor() {
@@ -91,5 +88,42 @@ export default class Network {
       this.computeLayer(this.hidden1,this.hidden2)
       this.computeLayer(this.hidden2,this.outputs)
       return this.outputs[0][0]
+   }
+
+   draw(){
+      const margins = 30
+      const jump = (canvas1.width - margins * 2) / 3
+      ctx1.fillStyle = "white"
+      this.drawLayer(this.inputs,jump * 0, margins,this.hidden1, jump * 1)
+      this.drawLayer(this.hidden1,jump * 1,margins,this.hidden2, jump * 2)
+      this.drawLayer(this.hidden2,jump * 2,margins,this.outputs, jump * 3)
+      this.drawLayer(this.outputs,jump * 3,margins,[],0)
+
+   }
+   drawLayer(layer,pos,margins,nextLayer,nextPos){
+      const nextHeight = (nextLayer.length-1) * 30
+      let startLayer = 1+ (canvas1.height - nextHeight) / 2
+
+      const totalHeight = (layer.length-1) * 30
+      let y = 1+ (canvas1.height - totalHeight) / 2
+      for (let i = 0; i < layer.length; i ++){
+         ctx1.strokeStyle = "white"
+         ctx1.lineWidth = 0.05;
+         for (let j = 0; j < nextLayer.length; j ++){
+            ctx1.beginPath();
+            ctx1.moveTo(margins + pos,margins+ y); 
+            ctx1.lineTo(margins+nextPos,margins+ startLayer + j * 30);
+            ctx1.stroke(); 
+         }
+
+         const value = layer[i][0]
+         ctx1.fillStyle = value > 0 ? `rgb(0,${255 * value},0)` : `rgb(${255 * value*-1},0,0)`
+         ctx1.beginPath();
+         ctx1.arc(margins +pos, margins + y, 10, 0, 2 * Math.PI);
+         ctx1.fill();
+
+
+         y +=30
+      }
    }
 }
