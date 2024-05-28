@@ -1,7 +1,6 @@
 import Car from './modules/Car.js'
-import {init, compute, draw, mutate} from "./modules/network.js"
+import Network from './modules/Network.js'
 import {ctx, canvas} from "./modules/canvas.js"
-import { canvas1, ctx1 } from './modules/canvas1.js'
 
 function drawRoad(SPEED, LINELEN, SIZE){
    ctx.fillStyle = "white"
@@ -21,7 +20,7 @@ function drawCars(cars,obstacles,SPEED,POPSIZE){
    for (let i = 0; i < POPSIZE; i ++ ){
       if (!cars[i].alive) continue
       if (cars[i].checkObstacle(nearestObstacle)) cars[i].alive = false
-      cars[i].angle += compute(cars[i].network,[cars[i].x/SIZE[0],cars[i].y/SIZE[1],nearestObstacle[0]/SIZE[0],nearestObstacle[1]/SIZE[1],1 / (1 + Math.exp(-cars[i].angle))])[0]
+      cars[i].angle += cars[i].network.compute([cars[i].x/SIZE[0],cars[i].y/SIZE[1],nearestObstacle[0]/SIZE[0],nearestObstacle[1]/SIZE[1],1 / (1 + Math.exp(-cars[i].angle))])
       cars[i].update(SPEED,SIZE)
       cars[i].draw()
    }
@@ -29,7 +28,7 @@ function drawCars(cars,obstacles,SPEED,POPSIZE){
    const selectCar = cars.find((car)=>car.alive)
    if (selectCar){
       selectCar.draw("rgba(0,255,255,0.8)")
-      draw(selectCar.network,canvas1,ctx1,2.5)
+      selectCar.network.draw()
    }
    return cars
 }
@@ -44,7 +43,7 @@ function drawObstacle(obstacles,SIZE,cars){
    });
    if (obstacles.length == 0 ){
       obstacles.push([Math.random() > 0.5 ? 55 : 290,-170])
-   }else if ( obstacles.sort((a,b)=>a[1]-b[1])[0][1] > 170 * 1.5) {
+   }else if ( obstacles.sort((a,b)=>a[1]-b[1])[0][1] > 170 * 3) {
       obstacles.push([Math.random() > 0.5 ? 55 : 290,-170])
    }
 
@@ -60,21 +59,20 @@ canvas.height = SIZE[1];
 const LINELEN = SIZE[1]/15
 const SPEED = 20
 const POPSIZE = 3000
-const networkStruct = [5,8,8,8,1]
 let start = 0
 let cars = []
 let genCount = 0
 let obstacles = []
 for (let i = 0; i < POPSIZE; i ++ ){
    cars.push(new Car(SIZE[0]/2,SIZE,true))
-   cars[i].network = init([],networkStruct)
+   cars[i].network = new Network()
+   cars[i].network.init()
 }
 console.log("Population : ",POPSIZE, "\n",
 "Speed : ",SPEED, "\n",
 "Function : Sigmoid", "\n",
 "Network : 5 : 16 : 8 : 1", "\n",
 )
-
 function animate(){
    ctx.clearRect(0,0,SIZE[0],SIZE[1])  
    drawRoad(SPEED, LINELEN, SIZE)
@@ -99,13 +97,14 @@ function animate(){
          cars.push(new Car(SIZE[0]/2,SIZE,true))
          if (i < POPSIZE/10){
             cars[i].network = best[Math.floor(Math.random()*10)].network
-            cars[i].network = mutate(cars[i].network,5)
+            cars[i].network.mutate()
          }else if (i < POPSIZE/2){
             const randomNetwork = Math.floor(Math.random()*pool.length)
             cars[i].network = pool[randomNetwork].network
-            cars[i].network = mutate(cars[i].network,10)
+            cars[i].network.mutate()
          }else {
-            cars[i].network = init([],networkStruct)
+            cars[i].network = new Network()
+            cars[i].network.init()
          }
       }
       

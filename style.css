@@ -3,11 +3,15 @@
    padding: 0px;
 }
 
+body {
+   background-color: #333;
+}
+
 
 #canva {
    background-color: grey;
 }
 
 #canva1 {
-   background-color: black;
+   background-color: #333;
 }

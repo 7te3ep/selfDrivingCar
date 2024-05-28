@@ -39,7 +39,7 @@ export default class Car {
       ctx.fillStyle = color
       ctx.save();
       ctx.translate(this.x, this.y);
-      ctx.rotate(this.angle * Math.PI/180)
+      //ctx.rotate(this.angle * Math.PI/180)
       ctx.fillRect(-this.size[0]/2,-this.size[1]/2,this.size[0],this.size[1]);
       ctx.restore();
 
