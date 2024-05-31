@@ -1,5 +1,8 @@
 import {ctx, canvas} from "./canvas.js"
 
+const img = new Image()
+img.src = "./car.png"
+
 export default class Car {
    constructor(x,SIZE, isClone = false,){
       this.isClone = isClone
@@ -10,6 +13,8 @@ export default class Car {
       this.alive = true
       this.fitScore = 0
       this.network
+      this.oldScore = 0
+      this.oldNetwork 
    }
 
    update(SPEED,SIZE){
@@ -40,7 +45,10 @@ export default class Car {
       ctx.save();
       ctx.translate(this.x, this.y);
       //ctx.rotate(this.angle * Math.PI/180)
-      ctx.fillRect(-this.size[0]/2,-this.size[1]/2,this.size[0],this.size[1]);
+      //sctx.fillRect(-this.size[0]/2,-this.size[1]/2,this.size[0],this.size[1]);
+      ctx.globalAlpha = 0.5;
+      ctx.drawImage(img, -this.size[0]/2,-this.size[1]/2)
+      ctx.globalAlpha = 1
       ctx.restore();
 
    }

@@ -98,16 +98,5 @@ function draw(network, canvas, ctx,size){
 function randBias(){
    return (Math.random()*2)-1
 }
-const canvas = document.getElementById("test");
-const ctx = canvas.getContext("2d");
-canvas.width = 400
-canvas.height = 400
-canvas.style.backgroundColor = "#444"
-
-let network = []
-network = init(network,[3,1,4])
-compute(network,[Math.random(),Math.random(),Math.random()])
-draw(network, canvas, ctx,1.5)
-network = mutate(network,10)
 
 export {init, compute, draw, mutate}
