@@ -27,7 +27,6 @@ function drawCars(cars,obstacles,SPEED,POPSIZE){
 
    const selectCar = cars.find((car)=>car.alive)
    if (selectCar){
-      selectCar.draw("rgba(0,255,255,0.8)")
       draw(selectCar.network,canvas1,ctx1,1.)
    }
    return cars
@@ -39,13 +38,12 @@ function drawObstacle(obstacles,SIZE,cars,alternator,obstacleImg){
    obstacles = obstacles.filter(obstacle => obstacle[1] < SIZE[1])
    obstacles.forEach(obstacle => {
       obstacle[1] += SPEED / 1.5
-      //ctx.fillRect(obstacle[0],obstacle[1],120,170);
       ctx.drawImage(obstacleImg,obstacle[0],obstacle[1]);
    });
    if (obstacles.length == 0 ){
       obstacles.push([alternator ? 55 : 290,-170])
       alternator = alternator ? false : true
-   }else if ( obstacles.sort((a,b)=>a[1]-b[1])[0][1] > 170 * 4) {
+   }else if ( obstacles.sort((a,b)=>a[1]-b[1])[0][1] > 170 * 3) {
       obstacles.push([alternator ? 55 : 290,-170])
       alternator = alternator ? false : true
    }
@@ -57,6 +55,9 @@ function drawObstacle(obstacles,SIZE,cars,alternator,obstacleImg){
 }
 
 function nextGen(oldPop,POPSIZE){   
+   //oldPop = oldPop.sort((a,b)=>b.fitScore-a.fitScore)
+   //oldPop = oldPop.slice(0,POPSIZE/2).concat(oldPop.slice(0,POPSIZE/2))
+   console.log(oldPop.length)
    const newPop = []
    for (let i = 0; i < POPSIZE; i ++){
       newPop.push(new Car(SIZE[0]/2,SIZE,true))
@@ -78,7 +79,7 @@ let SPEED = 20
 const obstacleImg = new Image()
 obstacleImg.src = "./obstacle.png"
 
-const POPSIZE = 100
+const POPSIZE = 4000
 const networkStruct = [5,8,8,1]
 let start = 0
 let cars = []
@@ -86,10 +87,12 @@ let genCount = 0
 let obstacles = []
 let alternator = false
 let lastFitness= []
+
 for (let i = 0; i < POPSIZE; i ++ ){
    cars.push(new Car(SIZE[0]/2,SIZE,true))
    cars[i].network = init([],networkStruct)
 }
+
 console.log("Population : ",POPSIZE, "\n",
 "Speed : ",SPEED, "\n",
 "Function : Sigmoid", "\n",
@@ -104,6 +107,7 @@ chart1.height = 300
 document.getElementById('speed').oninput = function() {
    SPEED = this.value;
  } 
+
 function animate(){
    ctx.clearRect(0,0,SIZE[0],SIZE[1])  
    
@@ -115,9 +119,7 @@ function animate(){
    alternator = obstacleResult[1]
    cars  = drawCars(cars,obstacles,SPEED,POPSIZE,SIZE)
    
-   if (cars.filter(car => car.alive) != 0){
-      requestAnimationFrame(animate)
-   }else {
+   if (!cars.find(car=>car.alive)) {
       genCount ++
       const totalFitness = cars.reduce((sum,el)=>sum += el.fitScore,0)
       lastFitness.push(totalFitness)
@@ -125,8 +127,8 @@ function animate(){
       const best = cars.sort((a,b)=>b.fitScore-a.fitScore)
       cars = nextGen(best,POPSIZE)
       obstacles = []
-      requestAnimationFrame(animate)
    }
+   requestAnimationFrame(animate)
 }
 
 animate()
